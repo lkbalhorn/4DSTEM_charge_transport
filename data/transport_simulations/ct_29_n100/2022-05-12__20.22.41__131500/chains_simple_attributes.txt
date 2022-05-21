@@ -1,0 +1,1 @@
+{"chain_length": 54, "xyz_full_path": "../data/chain_geometries/r50v11", "file_number": 10, "box_size": [800, 800, 30], "n_beads": 585792, "n_chains": 10848, "max_dim": 800.0, "shuffle": false, "align": false, "make_rigid": false, "modify_fraction": 1.0}
