@@ -1,20 +1,14 @@
 # 4DSTEM_charge_transport
  Combines microscopy and simulation to study charge transport in semiconducting polymers.
 
-#-------------------------------------------------------------------------------------
-#
+
 #     Basic info
-#
-#-------------------------------------------------------------------------------------
+
 Authors: 
 Luke Balhorn
 Contact: lk.balhorn@gmail.com
 
-#-------------------------------------------------------------------------------------
-#
 #     Contents
-#
-#-------------------------------------------------------------------------------------
 
 Code:  
 -The Python files preprocess_4dstem.py, flow_fields.py, and charge_transfer_assets.py 
@@ -38,22 +32,16 @@ increasing degrees of alignment.
 -The transport_simulations directory contains outputs of a charge transport simulation using
 one of the chain_geometries as its input.
 
-#-------------------------------------------------------------------------------------
-#
+
 #     Sample Study
-#
-#-------------------------------------------------------------------------------------
 
 To see the motivations behind this code and the results of a recent study, see the thesis
 "Structure-function relationships in semiconducting polymers : new methods combining 
 transmission electron microscopy and Monte Carlo simulations" by Luke Balhorn, available
 online through Stanford University.
 
-#-------------------------------------------------------------------------------------
-#
+
 #     Analysis Steps
-#
-#-------------------------------------------------------------------------------------
 
 Analysis begins with the output of a 4D-STEM experiment.  The preprocessing package and
 notebook are used to clean and center diffraction data, then integrate and convert to 
