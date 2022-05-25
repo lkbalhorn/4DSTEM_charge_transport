@@ -675,7 +675,7 @@ class PathExperiment:
     def __init__(self, silent=False, save_big_arrays=False):
         self.silent = silent
         self.save_big_arrays = save_big_arrays  # If false, skips saving items in the list self.big_arrays to save memory
-        self.big_arrays = ['expm_results', 'all_positions']
+        self.big_arrays = ['expm_results', 'all_positions', 'K', 'K_0', 'P_by_bead', 'P_cumulative'] 
         
         # Results of To File/From File methods:
         self.full_path = None
@@ -698,9 +698,6 @@ class PathExperiment:
         self.forward_rates = None
         self.backward_rates = None
         self.short_time_mobilities = None
-        self.chain_eigenvalues = None
-        self.chain_eigenvectors = None
-        self.chain_eigenvectors_inv = None
         self.expm_times = None
         self.expm_results = None
         
@@ -828,21 +825,25 @@ class PathExperiment:
         
         # Loop over arrays and put them in the correct place
         for f in numpy_files:
-            name = f[:-4]
-            if name in skip_attrs:
-                continue
-            if name in ['xyz', 'chains_xyz', 'shape', 'default_shape']:
-                # These are for the ChainSet class
-                continue
-                
             try:
-                full_path = folder_path + '/' + name + '.npy'
-                value = np.load(full_path, allow_pickle=True)
-                setattr(self, name, value)
-            except OSError:
-                # Attribute not present in this version of the file
-                # print('Could not load attribute %s' % name)
-                pass
+                name = f[:-4]
+                if name in skip_attrs:
+                    continue
+                if name in ['xyz', 'chains_xyz', 'shape', 'default_shape']:
+                    # These are for the ChainSet class
+                    continue
+
+                try:
+                    full_path = folder_path + '/' + name + '.npy'
+                    value = np.load(full_path, allow_pickle=True)
+                    setattr(self, name, value)
+                except OSError:
+                    # Attribute not present in this version of the file
+                    # print('Could not load attribute %s' % name)
+                    pass
+            except AttributeError:
+                # This value was probably saved by an earlier version of the simulation code, and is no longer used.
+                print('Unexpected numpy array discovered: %s.  Skipping...' % f)
         
         # Load ChainSet data
         with open(folder_path + '/' + 'chains_simple_attributes.txt', 'r') as file:
@@ -961,18 +962,18 @@ class PathExperiment:
         print('Diagonalizing Rates...')
         n_chains = self.chains.n_chains
         chain_length = self.chains.chain_length
-        self.chain_eigenvalues = np.zeros((n_chains, chain_length))
-        self.chain_eigenvectors = np.zeros((n_chains, chain_length, chain_length))
-        self.chain_eigenvectors_inv = np.zeros((n_chains, chain_length, chain_length))
+        chain_eigenvalues = np.zeros((n_chains, chain_length))
+        chain_eigenvectors = np.zeros((n_chains, chain_length, chain_length))
+        chain_eigenvectors_inv = np.zeros((n_chains, chain_length, chain_length))
         for i in range(n_chains):
             w, v = np.linalg.eig(self.K[i, :, :])
             # v is The normalized (unit “length”) eigenvectors, such that the column v[:,i] is the eigenvector corresponding to the eigenvalue w[i].
-            self.chain_eigenvalues[i, :] = w[:]
-            self.chain_eigenvectors[i, :, :] = v[:, :]
-            self.chain_eigenvectors_inv[i, :, :] = np.linalg.inv(v[:, :])
+            chain_eigenvalues[i, :] = w[:]
+            chain_eigenvectors[i, :, :] = v[:, :]
+            chain_eigenvectors_inv[i, :, :] = np.linalg.inv(v[:, :])
         # Estimate range of eigenvalues.  High accuracy not needed, abs prevents error for occasional negative value.  
-        self.smallest_eigenvalue = np.min(np.sort(np.abs(self.chain_eigenvalues))[:, 1:]) # Per s. 
-        self.largest_eigenvalue = np.max(self.chain_eigenvalues) # Per s
+        self.smallest_eigenvalue = np.min(np.sort(np.abs(chain_eigenvalues))[:, 1:]) # Per s. 
+        self.largest_eigenvalue = np.max(chain_eigenvalues) # Per s
                 
         # Tabulate values for precomputed expm method
         # Dimensions are Chain, Time, End, Start to match matrix equation
@@ -1453,9 +1454,7 @@ class PathExperiment:
 
         # self.expm_results is chain, time, end, start
             
-        if n_chains is None:
-            n_chains = self.K.shape[0]  # n_chains not recorded for early data
-        print(n_chains)
+        n_chains = self.n_chains  # These used to be different due to a reverse-compatibility issue
             
         # Compute Progress
         results = self.expm_results[:n_chains, :, :, :]
