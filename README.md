@@ -13,22 +13,27 @@ Contact: lk.balhorn@gmail.com
 Code:  
 -The Python files preprocess_4dstem.py, flow_fields.py, and charge_transfer_assets.py 
 contain most of the analysis code, which can be imported into scripts or Jupyter notebooks 
-to perform the analysis.  
+to perform the analysis. 
+ 
 -Sample Jupyter notebooks preprocess_demo.ipynb, flow_fields_demo.ipynb, and 
 charge_transport_demo.ipynb provide a demonstration of how to use the tools in these 
 modules.  Additionally, paper_figures.ipynb shows the actual code used for analysis for 
 a forthcoming paper.  
+
 -Each of these Jupyter notebooks was also saved as HTML to show sample outputs.  
 
 Data:
 -The 4DSTEM directory contains preprocessed 4DSTEM data at two different resolutions.  
 This sample data is created by centering and cleaning the 4D-STEM output, then integrating
 over cake slices to convert to Q vs. Chi.
+
 -Raw 4DSTEM available is not included at this time because the file sizes are too large for 
 GitHub. 
+
 -The chain_geometries directory contains output xyz coordinates from structural simulations.
 Each chain is comprised of 54 xyz positions.  Increasing numbers in the filenames indicate 
 increasing degrees of alignment.  
+
 -The transport_simulations directory contains outputs of a charge transport simulation using
 one of the chain_geometries as its input.
 
