@@ -37,6 +37,10 @@ increasing degrees of alignment.
 - The transport_simulations directory contains outputs of a charge transport simulation using
 one of the chain_geometries as its input.
 
+- Additional data is available at DOI: 10.5281/zenodo.6585396.  This includes the 4D-STEM 
+datasets used as a starting point for the sample analysis and simulation outputs referenced
+in paper_figures.ipynb.  
+
 
 #     Sample Study
 
